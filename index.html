@@ -278,6 +278,10 @@
     const titleFromFile = (file) =>
       file.replace(/\.[^.]+$/, "").replace(/_+/g, " ").replace(/Only\s*One/gi, "OnlyOne").replace(/\s+/g, " ").trim();
 
+    /* Общий счётчик лайков (Abacus) */
+    const LIKE_API = "https://abacus.jasoncameron.dev";
+    const LIKE_NS = "onlyone-kutuzov";
+
     const grid = document.getElementById("tracksGrid");
     if (!TRACKS.length) {
       grid.innerHTML = '<p class="tracks__empty">Скоро здесь появятся треки…</p>';
@@ -301,9 +305,7 @@
       });
     }
 
-    /* Лайк: общий счётчик (Abacus). Один лайк на трек для пользователя. */
-    const LIKE_API = "https://abacus.jasoncameron.dev";
-    const LIKE_NS = "onlyone-kutuzov";
+    /* Лайк: один на трек для пользователя. */
     function initLike(card, file) {
       const btn = card.querySelector(".like-btn");
       const countEl = btn.querySelector(".like-count");
