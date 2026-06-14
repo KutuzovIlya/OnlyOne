@@ -171,7 +171,7 @@
     .like-btn svg { width: 18px; height: 18px; fill: currentColor; transition: transform .2s ease; }
     .like-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
     .like-btn:active { transform: scale(.95); }
-    .like-btn.liked { color: #fff; background: linear-gradient(120deg, var(--g3), var(--g2)); border-color: transparent; }
+    .like-btn.liked { color: #fff; background: linear-gradient(120deg, var(--g3), var(--g2)); border-color: transparent; cursor: default; }
     .like-btn.liked svg { transform: scale(1.18); animation: pop .35s ease; }
     @keyframes pop { 40% { transform: scale(1.5); } }
     .like-count { font-variant-numeric: tabular-nums; }
@@ -301,23 +301,38 @@
       });
     }
 
-    /* Лайк: один на трек для пользователя (сохраняется в браузере) */
+    /* Лайк: общий счётчик (Abacus). Один лайк на трек для пользователя. */
+    const LIKE_API = "https://abacus.jasoncameron.dev";
+    const LIKE_NS = "onlyone-kutuzov";
     function initLike(card, file) {
       const btn = card.querySelector(".like-btn");
       const countEl = btn.querySelector(".like-count");
-      const key = "oo_liked_" + hash(file);
-      const base = 0; // стартовое число лайков (без бэкенда счёт локальный, для каждого браузера свой)
-      let liked = localStorage.getItem(key) === "1";
-      const render = () => {
+      const key = "t" + hash(file);
+      const lsKey = "oo_liked_" + key;
+      let liked = localStorage.getItem(lsKey) === "1";
+
+      const markLiked = (v) => {
+        liked = v;
         btn.classList.toggle("liked", liked);
         btn.setAttribute("aria-pressed", String(liked));
-        countEl.textContent = base + (liked ? 1 : 0);
       };
-      render();
+      markLiked(liked);
+
+      // Текущее общее число лайков
+      fetch(LIKE_API + "/get/" + LIKE_NS + "/" + key)
+        .then((r) => (r.ok ? r.json() : { value: 0 }))
+        .then((d) => { countEl.textContent = (d && typeof d.value === "number") ? d.value : 0; })
+        .catch(() => {});
+
       btn.addEventListener("click", () => {
-        liked = !liked;
-        if (liked) localStorage.setItem(key, "1"); else localStorage.removeItem(key);
-        render();
+        if (liked) return;                       // один лайк на пользователя
+        markLiked(true);
+        localStorage.setItem(lsKey, "1");
+        countEl.textContent = (parseInt(countEl.textContent, 10) || 0) + 1; // оптимистично
+        fetch(LIKE_API + "/hit/" + LIKE_NS + "/" + key)
+          .then((r) => r.json())
+          .then((d) => { if (d && typeof d.value === "number") countEl.textContent = d.value; })
+          .catch(() => {});
       });
     }
 
