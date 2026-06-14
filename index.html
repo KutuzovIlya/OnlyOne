@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <title>OnlyOne — Russian Rap</title>
+  <title>OnlyOne | Russian Rap</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
@@ -14,11 +14,9 @@
       --border: rgba(255,255,255,0.09);
       --text: #f2f2f5;
       --muted: #9b9ba8;
-      --g1: #FFD23F;
-      --g2: #FF6A3D;
-      --g3: #FF2E88;
-      --g4: #8A5BFF;
-      --grad: linear-gradient(120deg, var(--g1), var(--g2) 40%, var(--g3) 70%, var(--g4));
+      --accent: #FF4D6D;
+      --accent-2: #FF7A45;
+      --grad: linear-gradient(120deg, var(--accent-2), var(--accent));
       --safe-t: env(safe-area-inset-top, 0px);
       --safe-b: env(safe-area-inset-bottom, 0px);
       --safe-l: env(safe-area-inset-left, 0px);
@@ -41,20 +39,12 @@
     a { color: inherit; text-decoration: none; }
     .container { width: min(1180px, 92%); margin: 0 auto; }
 
-    /* Градиентный «меш» фон */
-    .mesh { position: fixed; inset: -20%; z-index: -2; pointer-events: none; filter: blur(90px); opacity: .55; }
-    .mesh i { position: absolute; border-radius: 50%; display: block; }
-    .mesh .m1 { width: 46vw; height: 46vw; background: var(--g3); top: -6%; left: -8%; animation: drift1 20s ease-in-out infinite alternate; }
-    .mesh .m2 { width: 42vw; height: 42vw; background: var(--g4); bottom: -10%; right: -6%; animation: drift2 24s ease-in-out infinite alternate; }
-    .mesh .m3 { width: 34vw; height: 34vw; background: var(--g1); top: 38%; left: 46%; animation: drift3 28s ease-in-out infinite alternate; }
-    @keyframes drift1 { to { transform: translate(14vw, 8vw); } }
-    @keyframes drift2 { to { transform: translate(-12vw, -8vw); } }
-    @keyframes drift3 { to { transform: translate(-10vw, 6vw) scale(.85); } }
-
-    /* Тонкое зерно */
-    body::after {
-      content: ""; position: fixed; inset: 0; z-index: 100; pointer-events: none; opacity: .035;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    /* Статичный фон: один мягкий тёплый ореол сверху */
+    body::before {
+      content: ""; position: fixed; inset: 0; z-index: -2; pointer-events: none;
+      background:
+        radial-gradient(60vw 50vh at 50% -8%, rgba(255,122,69,0.16), transparent 70%),
+        radial-gradient(48vw 44vh at 82% 18%, rgba(255,77,109,0.10), transparent 72%);
     }
 
     /* Навигация */
@@ -74,42 +64,27 @@
     @media (max-width: 560px) { .nav { gap: 10px; padding: 8px 8px 8px 16px; } .nav__links a { padding: 9px 10px; font-size: 13px; } }
 
     /* ШАПКА */
-    .hero { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; text-align: center; padding: calc(130px + var(--safe-t)) 18px 90px; position: relative; }
-    .hero__badge {
-      display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--muted);
-      padding: 7px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); backdrop-filter: blur(8px);
-      margin-bottom: 26px;
-    }
-    .hero__badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--g1); box-shadow: 0 0 12px var(--g1); }
+    .hero { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; text-align: center; padding: calc(120px + var(--safe-t)) 18px 90px; position: relative; }
     .hero__name {
       font-family: "Unbounded"; font-weight: 800; line-height: .95; letter-spacing: -2px;
       font-size: clamp(64px, 16vw, 220px);
-      background: var(--grad); background-size: 200% 200%;
+      background: var(--grad);
       -webkit-background-clip: text; background-clip: text; color: transparent;
-      animation: shimmer 6s ease-in-out infinite;
-      filter: drop-shadow(0 10px 50px rgba(255,46,136,.25));
     }
-    @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
-    .hero__subtitle { margin-top: 12px; font-family: "Unbounded"; font-weight: 600; font-size: clamp(16px, 4vw, 30px); letter-spacing: 4px; text-transform: uppercase; color: var(--text); min-height: 1.3em; }
-    .hero__subtitle .caret { color: var(--g3); animation: blink 1s steps(1) infinite; }
-    @keyframes blink { 50% { opacity: 0; } }
+    .hero__subtitle { margin-top: 14px; font-family: "Unbounded"; font-weight: 600; font-size: clamp(16px, 4vw, 30px); letter-spacing: 4px; text-transform: uppercase; color: var(--muted); }
 
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 10px;
       margin-top: 38px; min-height: 52px; padding: 15px 36px; border-radius: 999px;
-      font-weight: 700; font-size: 17px; color: #120a02; background: var(--grad); background-size: 160% 160%;
-      box-shadow: 0 12px 36px rgba(255,106,61,.35); cursor: pointer;
-      transition: transform .18s ease, box-shadow .18s ease, background-position .6s ease;
+      font-weight: 700; font-size: 17px; color: #120a02; background: var(--grad);
+      box-shadow: 0 10px 26px rgba(0,0,0,.45); cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, filter .2s ease;
     }
-    .btn:hover { transform: translateY(-3px); box-shadow: 0 18px 48px rgba(255,46,136,.5); background-position: 100% 50%; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,0,0,.5); filter: brightness(1.05); }
     .btn:active { transform: translateY(0); }
-
-    .hero__scroll { position: absolute; bottom: calc(26px + var(--safe-b)); left: 0; right: 0; text-align: center; color: var(--muted); font-size: 22px; animation: bounce 2.2s infinite; }
-    @keyframes bounce { 0%,100%{transform:translateY(0); opacity:.5} 50%{transform:translateY(10px); opacity:1} }
 
     /* СЕКЦИИ */
     section { padding: 100px 0; position: relative; }
-    .eyebrow { text-align: center; font-size: 13px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--g2); margin-bottom: 10px; }
     .section-title { font-family: "Unbounded"; font-weight: 800; font-size: clamp(34px, 7vw, 64px); text-align: center; margin-bottom: 46px; letter-spacing: -1px; }
 
     .glass {
@@ -137,15 +112,15 @@
     .track__row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
     .track__art {
       flex: 0 0 auto; width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center;
-      background: var(--grad); color: #120a02; box-shadow: 0 8px 22px rgba(255,106,61,.35);
+      background: var(--grad); color: #120a02; box-shadow: 0 8px 22px rgba(0,0,0,.4);
     }
     .track__art svg { width: 24px; height: 24px; }
     .track__title { font-family: "Unbounded"; font-weight: 600; font-size: 17px; line-height: 1.2; letter-spacing: -.3px; }
     .track audio { width: 100%; min-height: 44px; }
 
-    .track.playing { border-color: transparent; box-shadow: 0 0 0 1.5px var(--g3), 0 18px 44px rgba(255,46,136,.28); }
+    .track.playing { border-color: transparent; box-shadow: 0 0 0 1.5px var(--accent), 0 18px 44px rgba(0,0,0,.45); }
     .track.playing .track__art { animation: pulse 1.4s ease-in-out infinite; }
-    @keyframes pulse { 50% { transform: scale(1.08); box-shadow: 0 10px 30px rgba(255,46,136,.6); } }
+    @keyframes pulse { 50% { transform: scale(1.06); } }
 
     /* КОНТАКТЫ */
     .contacts { text-align: center; }
@@ -158,7 +133,7 @@
       color: var(--text);
     }
     .social svg { width: 26px; height: 26px; fill: currentColor; }
-    .social:hover { transform: translateY(-4px); background: var(--grad); color: #120a02; box-shadow: 0 14px 34px rgba(255,106,61,.4); }
+    .social:hover { transform: translateY(-4px); background: var(--grad); color: #120a02; box-shadow: 0 14px 34px rgba(0,0,0,.45); }
 
     /* Лайк трека */
     .like-btn {
@@ -171,7 +146,7 @@
     .like-btn svg { width: 18px; height: 18px; fill: currentColor; transition: transform .2s ease; }
     .like-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
     .like-btn:active { transform: scale(.95); }
-    .like-btn.liked { color: #fff; background: linear-gradient(120deg, var(--g3), var(--g2)); border-color: transparent; cursor: default; }
+    .like-btn.liked { color: #fff; background: var(--grad); border-color: transparent; cursor: default; }
     .like-btn.liked svg { transform: scale(1.18); animation: pop .35s ease; }
     @keyframes pop { 40% { transform: scale(1.5); } }
     .like-count { font-variant-numeric: tabular-nums; }
@@ -181,13 +156,11 @@
     .reveal { opacity: 0; transform: translateY(36px); transition: opacity .7s ease, transform .7s ease; }
     .reveal.visible { opacity: 1; transform: translateY(0); }
     @media (prefers-reduced-motion: reduce) {
-      .mesh i, .hero__name, .hero__scroll, .track.playing .track__art { animation: none; }
+      .track.playing .track__art { animation: none; }
     }
   </style>
 </head>
 <body>
-
-  <div class="mesh" aria-hidden="true"><i class="m1"></i><i class="m2"></i><i class="m3"></i></div>
 
   <nav class="nav">
     <div class="nav__brand"><b>OnlyOne</b></div>
@@ -201,22 +174,19 @@
   <!-- ШАПКА -->
   <header class="hero" id="top">
     <div>
-      <span class="hero__badge"><span class="dot"></span> Russian Rap · Independent</span>
       <h1 class="hero__name">OnlyOne</h1>
-      <p class="hero__subtitle"><span id="typed"></span><span class="caret">▌</span></p>
-      <div><a href="#tracks" class="btn">► Слушать музыку</a></div>
+      <p class="hero__subtitle">Russian Rap</p>
+      <div><a href="#tracks" class="btn">Слушать музыку</a></div>
     </div>
-    <div class="hero__scroll">↓</div>
   </header>
 
   <!-- ОБО МНЕ -->
   <section id="about">
     <div class="container reveal">
-      <div class="eyebrow">About</div>
       <h2 class="section-title">Обо мне</h2>
       <div class="about__card glass">
-        <p>OnlyOne — независимый рэп-исполнитель из России. Честный текст, плотный бит и собственный почерк, выросший на старой школе хип-хопа и звуке улиц.</p>
-        <div class="about__sign">— OnlyOne</div>
+        <p>OnlyOne, независимый рэп-исполнитель из России. Честный текст, плотный бит и собственный почерк, выросший на старой школе хип-хопа и звуке улиц.</p>
+        <div class="about__sign">OnlyOne</div>
       </div>
     </div>
   </section>
@@ -224,7 +194,6 @@
   <!-- ТРЕКИ -->
   <section id="tracks">
     <div class="container">
-      <div class="eyebrow reveal">Music</div>
       <h2 class="section-title reveal">Треки</h2>
       <div class="tracks__grid" id="tracksGrid"></div>
     </div>
@@ -233,9 +202,8 @@
   <!-- КОНТАКТЫ -->
   <section id="contacts" class="contacts">
     <div class="container reveal">
-      <div class="eyebrow">Contacts</div>
       <h2 class="section-title">Связаться</h2>
-      <p class="contacts__text">По вопросам сотрудничества и фитов — пиши в соцсети.</p>
+      <p class="contacts__text">По вопросам сотрудничества и фитов пиши в соцсети.</p>
       <div class="socials">
         <a href="https://vk.com/on1y0ne" target="_blank" rel="noopener" class="social" aria-label="VK">
           <svg viewBox="0 0 24 24"><path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93v6.14C2 20.67 3.33 22 8.93 22h6.14c5.6 0 6.93-1.33 6.93-6.93V8.93C22 3.33 20.67 2 15.07 2Zm3.07 14.27h-1.46c-.55 0-.72-.44-1.71-1.43-.86-.83-1.24-.94-1.45-.94-.3 0-.39.08-.39.5v1.31c0 .36-.12.58-1.07.58-1.57 0-3.31-.95-4.54-2.72-1.84-2.59-2.35-4.53-2.35-4.93 0-.22.08-.42.5-.42h1.46c.38 0 .52.17.67.58.72 2.08 1.92 3.9 2.42 3.9.18 0 .27-.09.27-.56v-1.95c-.06-1-.59-1.08-.59-1.43 0-.17.14-.34.37-.34h2.29c.32 0 .43.17.43.55v2.9c0 .32.14.43.23.43.18 0 .33-.11.66-.44 1.02-1.14 1.74-2.9 1.74-2.9.1-.22.27-.42.65-.42h1.46c.44 0 .53.22.44.53-.18.85-1.97 3.37-1.97 3.37-.15.25-.21.36 0 .64.15.21.65.64.98 1.03.62.7 1.09 1.29 1.22 1.7.13.4-.07.61-.48.61Z"/></svg>
@@ -250,7 +218,7 @@
     </div>
   </section>
 
-  <footer>© OnlyOne — Russian Rap</footer>
+  <footer>© OnlyOne · Russian Rap</footer>
 
   <script>
     /* ====== СПИСОК ТРЕКОВ ======
@@ -346,8 +314,8 @@
     }, { threshold: 0.12 });
     document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
 
-    /* Один играющий трек + подсветка */
-    const audios = document.querySelectorAll("audio");
+    /* Один играющий трек + подсветка + автопереход к следующему */
+    const audios = Array.from(document.querySelectorAll("audio"));
     audios.forEach((a) => {
       a.addEventListener("play", () => {
         audios.forEach((o) => { if (o !== a) o.pause(); });
@@ -355,18 +323,15 @@
         a.closest(".track").classList.add("playing");
       });
       a.addEventListener("pause", () => a.closest(".track")?.classList.remove("playing"));
-      a.addEventListener("ended", () => a.closest(".track")?.classList.remove("playing"));
+      a.addEventListener("ended", () => {
+        a.closest(".track")?.classList.remove("playing");
+        const next = audios[audios.indexOf(a) + 1];
+        if (next) {
+          next.play().catch(() => {});
+          next.closest(".track")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      });
     });
-
-    /* Печатающийся подзаголовок */
-    (function typewriter() {
-      const text = "Russian Rap";
-      const el = document.getElementById("typed");
-      let i = 0;
-      (function tick() {
-        if (i <= text.length) { el.textContent = text.slice(0, i++); setTimeout(tick, 130); }
-      })();
-    })();
   </script>
 
 </body>
