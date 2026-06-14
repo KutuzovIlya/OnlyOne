@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>OnlyOne — Russian Rap</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #07070a;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.09);
+      --text: #f2f2f5;
+      --muted: #9b9ba8;
+      --g1: #FFD23F;
+      --g2: #FF6A3D;
+      --g3: #FF2E88;
+      --g4: #8A5BFF;
+      --grad: linear-gradient(120deg, var(--g1), var(--g2) 40%, var(--g3) 70%, var(--g4));
+      --safe-t: env(safe-area-inset-top, 0px);
+      --safe-b: env(safe-area-inset-bottom, 0px);
+      --safe-l: env(safe-area-inset-left, 0px);
+      --safe-r: env(safe-area-inset-right, 0px);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    body {
+      font-family: "Inter", system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.65;
+      overflow-x: hidden;
+      padding-left: var(--safe-l);
+      padding-right: var(--safe-r);
+    }
+    .display { font-family: "Unbounded", system-ui, sans-serif; }
+    a { color: inherit; text-decoration: none; }
+    .container { width: min(1180px, 92%); margin: 0 auto; }
+
+    /* Градиентный «меш» фон */
+    .mesh { position: fixed; inset: -20%; z-index: -2; pointer-events: none; filter: blur(90px); opacity: .55; }
+    .mesh i { position: absolute; border-radius: 50%; display: block; }
+    .mesh .m1 { width: 46vw; height: 46vw; background: var(--g3); top: -6%; left: -8%; animation: drift1 20s ease-in-out infinite alternate; }
+    .mesh .m2 { width: 42vw; height: 42vw; background: var(--g4); bottom: -10%; right: -6%; animation: drift2 24s ease-in-out infinite alternate; }
+    .mesh .m3 { width: 34vw; height: 34vw; background: var(--g1); top: 38%; left: 46%; animation: drift3 28s ease-in-out infinite alternate; }
+    @keyframes drift1 { to { transform: translate(14vw, 8vw); } }
+    @keyframes drift2 { to { transform: translate(-12vw, -8vw); } }
+    @keyframes drift3 { to { transform: translate(-10vw, 6vw) scale(.85); } }
+
+    /* Тонкое зерно */
+    body::after {
+      content: ""; position: fixed; inset: 0; z-index: 100; pointer-events: none; opacity: .035;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* Навигация */
+    .nav {
+      position: fixed; z-index: 60; left: 50%; transform: translateX(-50%);
+      top: calc(14px + var(--safe-t));
+      display: flex; align-items: center; gap: 26px;
+      padding: 10px 14px 10px 22px; border-radius: 999px;
+      background: rgba(15,15,20,0.55); backdrop-filter: blur(16px) saturate(160%);
+      border: 1px solid var(--border); box-shadow: 0 8px 30px rgba(0,0,0,.4);
+    }
+    .nav__brand { font-family: "Unbounded"; font-weight: 800; font-size: 18px; }
+    .nav__brand b { background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .nav__links { display: flex; gap: 6px; }
+    .nav__links a { font-size: 14px; color: var(--muted); padding: 9px 14px; border-radius: 999px; min-height: 40px; display: inline-flex; align-items: center; transition: color .2s, background .2s; }
+    .nav__links a:hover { color: var(--text); background: rgba(255,255,255,0.07); }
+    @media (max-width: 560px) { .nav { gap: 10px; padding: 8px 8px 8px 16px; } .nav__links a { padding: 9px 10px; font-size: 13px; } }
+
+    /* ШАПКА */
+    .hero { min-height: 100vh; min-height: 100svh; display: grid; place-items: center; text-align: center; padding: calc(130px + var(--safe-t)) 18px 90px; position: relative; }
+    .hero__badge {
+      display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; color: var(--muted);
+      padding: 7px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--card); backdrop-filter: blur(8px);
+      margin-bottom: 26px;
+    }
+    .hero__badge .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--g1); box-shadow: 0 0 12px var(--g1); }
+    .hero__name {
+      font-family: "Unbounded"; font-weight: 800; line-height: .95; letter-spacing: -2px;
+      font-size: clamp(64px, 16vw, 220px);
+      background: var(--grad); background-size: 200% 200%;
+      -webkit-background-clip: text; background-clip: text; color: transparent;
+      animation: shimmer 6s ease-in-out infinite;
+      filter: drop-shadow(0 10px 50px rgba(255,46,136,.25));
+    }
+    @keyframes shimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    .hero__subtitle { margin-top: 12px; font-family: "Unbounded"; font-weight: 600; font-size: clamp(16px, 4vw, 30px); letter-spacing: 4px; text-transform: uppercase; color: var(--text); min-height: 1.3em; }
+    .hero__subtitle .caret { color: var(--g3); animation: blink 1s steps(1) infinite; }
+    @keyframes blink { 50% { opacity: 0; } }
+
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      margin-top: 38px; min-height: 52px; padding: 15px 36px; border-radius: 999px;
+      font-weight: 700; font-size: 17px; color: #120a02; background: var(--grad); background-size: 160% 160%;
+      box-shadow: 0 12px 36px rgba(255,106,61,.35); cursor: pointer;
+      transition: transform .18s ease, box-shadow .18s ease, background-position .6s ease;
+    }
+    .btn:hover { transform: translateY(-3px); box-shadow: 0 18px 48px rgba(255,46,136,.5); background-position: 100% 50%; }
+    .btn:active { transform: translateY(0); }
+
+    .hero__scroll { position: absolute; bottom: calc(26px + var(--safe-b)); left: 0; right: 0; text-align: center; color: var(--muted); font-size: 22px; animation: bounce 2.2s infinite; }
+    @keyframes bounce { 0%,100%{transform:translateY(0); opacity:.5} 50%{transform:translateY(10px); opacity:1} }
+
+    /* СЕКЦИИ */
+    section { padding: 100px 0; position: relative; }
+    .eyebrow { text-align: center; font-size: 13px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--g2); margin-bottom: 10px; }
+    .section-title { font-family: "Unbounded"; font-weight: 800; font-size: clamp(34px, 7vw, 64px); text-align: center; margin-bottom: 46px; letter-spacing: -1px; }
+
+    .glass {
+      background: var(--card); border: 1px solid var(--border); border-radius: 24px;
+      backdrop-filter: blur(14px); box-shadow: 0 20px 60px rgba(0,0,0,.35);
+    }
+
+    /* ОБО МНЕ */
+    .about__card { max-width: 760px; margin: 0 auto; padding: 38px; }
+    .about__card p { color: #d4d4dc; font-size: 17px; }
+    .about__card p + p { margin-top: 16px; }
+    .about__sign { margin-top: 24px; font-family: "Unbounded"; font-weight: 600; font-size: 18px; background: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+    /* ТРЕКИ */
+    .tracks__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+    @media (max-width: 600px) { .tracks__grid { grid-template-columns: 1fr; } }
+    .tracks__empty { text-align: center; color: var(--muted); font-size: 18px; }
+
+    .track {
+      position: relative; padding: 20px; border-radius: 20px;
+      background: var(--card); border: 1px solid var(--border); backdrop-filter: blur(12px);
+      transition: transform .22s ease, border-color .22s ease, box-shadow .22s ease;
+    }
+    .track:hover { transform: translateY(-5px); border-color: rgba(255,255,255,0.18); box-shadow: 0 18px 44px rgba(0,0,0,.45); }
+    .track__row { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+    .track__art {
+      flex: 0 0 auto; width: 50px; height: 50px; border-radius: 14px; display: grid; place-items: center;
+      background: var(--grad); color: #120a02; box-shadow: 0 8px 22px rgba(255,106,61,.35);
+    }
+    .track__art svg { width: 24px; height: 24px; }
+    .track__title { font-family: "Unbounded"; font-weight: 600; font-size: 17px; line-height: 1.2; letter-spacing: -.3px; }
+    .track audio { width: 100%; min-height: 44px; }
+
+    .track.playing { border-color: transparent; box-shadow: 0 0 0 1.5px var(--g3), 0 18px 44px rgba(255,46,136,.28); }
+    .track.playing .track__art { animation: pulse 1.4s ease-in-out infinite; }
+    @keyframes pulse { 50% { transform: scale(1.08); box-shadow: 0 10px 30px rgba(255,46,136,.6); } }
+
+    /* КОНТАКТЫ */
+    .contacts { text-align: center; }
+    .contacts__text { color: #d4d4dc; max-width: 560px; margin: 0 auto; font-size: 17px; }
+    .socials { display: flex; justify-content: center; gap: 16px; margin-top: 30px; flex-wrap: wrap; }
+    .social {
+      width: 60px; height: 60px; border-radius: 18px; display: grid; place-items: center;
+      background: var(--card); border: 1px solid var(--border); backdrop-filter: blur(10px);
+      transition: transform .2s ease, background .25s ease, box-shadow .2s ease, color .2s ease;
+      color: var(--text);
+    }
+    .social svg { width: 26px; height: 26px; fill: currentColor; }
+    .social:hover { transform: translateY(-4px); background: var(--grad); color: #120a02; box-shadow: 0 14px 34px rgba(255,106,61,.4); }
+
+    /* Счётчик */
+    .counter { margin: 64px auto 0; display: inline-flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 26px; border-radius: 18px; }
+    .counter__label { color: var(--muted); font-size: 12px; letter-spacing: 3px; text-transform: uppercase; }
+    .counter__digits { display: inline-flex; gap: 6px; }
+    .counter__digits span {
+      font-family: "Unbounded"; font-weight: 800; font-size: 30px; padding: 6px 10px; border-radius: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+      background-image: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+    }
+
+    footer { text-align: center; padding: 40px 0 calc(40px + var(--safe-b)); color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); margin-top: 70px; }
+
+    .reveal { opacity: 0; transform: translateY(36px); transition: opacity .7s ease, transform .7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    @media (prefers-reduced-motion: reduce) {
+      .mesh i, .hero__name, .hero__scroll, .track.playing .track__art { animation: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="mesh" aria-hidden="true"><i class="m1"></i><i class="m2"></i><i class="m3"></i></div>
+
+  <nav class="nav">
+    <div class="nav__brand"><b>OnlyOne</b></div>
+    <div class="nav__links">
+      <a href="#about">Обо мне</a>
+      <a href="#tracks">Треки</a>
+      <a href="#contacts">Контакты</a>
+    </div>
+  </nav>
+
+  <!-- ШАПКА -->
+  <header class="hero" id="top">
+    <div>
+      <span class="hero__badge"><span class="dot"></span> Russian Rap · Independent</span>
+      <h1 class="hero__name">OnlyOne</h1>
+      <p class="hero__subtitle"><span id="typed"></span><span class="caret">▌</span></p>
+      <div><a href="#tracks" class="btn">► Слушать музыку</a></div>
+    </div>
+    <div class="hero__scroll">↓</div>
+  </header>
+
+  <!-- ОБО МНЕ -->
+  <section id="about">
+    <div class="container reveal">
+      <div class="eyebrow">About</div>
+      <h2 class="section-title">Обо мне</h2>
+      <div class="about__card glass">
+        <p>OnlyOne — независимый рэп-исполнитель из России. Честный текст, плотный бит и собственный почерк, выросший на старой школе хип-хопа и звуке улиц.</p>
+        <p>Здесь заглушка-биография: расскажи о своём пути, релизах и о том, что хочешь донести слушателю. Замени этот текст на свой.</p>
+        <div class="about__sign">— OnlyOne</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ТРЕКИ -->
+  <section id="tracks">
+    <div class="container">
+      <div class="eyebrow reveal">Music</div>
+      <h2 class="section-title reveal">Треки</h2>
+      <div class="tracks__grid" id="tracksGrid"></div>
+    </div>
+  </section>
+
+  <!-- КОНТАКТЫ -->
+  <section id="contacts" class="contacts">
+    <div class="container reveal">
+      <div class="eyebrow">Contacts</div>
+      <h2 class="section-title">Связаться</h2>
+      <p class="contacts__text">По вопросам сотрудничества и фитов — пиши в соцсети.</p>
+      <div class="socials">
+        <a href="https://vk.com/on1y0ne" target="_blank" rel="noopener" class="social" aria-label="VK">
+          <svg viewBox="0 0 24 24"><path d="M15.07 2H8.93C3.33 2 2 3.33 2 8.93v6.14C2 20.67 3.33 22 8.93 22h6.14c5.6 0 6.93-1.33 6.93-6.93V8.93C22 3.33 20.67 2 15.07 2Zm3.07 14.27h-1.46c-.55 0-.72-.44-1.71-1.43-.86-.83-1.24-.94-1.45-.94-.3 0-.39.08-.39.5v1.31c0 .36-.12.58-1.07.58-1.57 0-3.31-.95-4.54-2.72-1.84-2.59-2.35-4.53-2.35-4.93 0-.22.08-.42.5-.42h1.46c.38 0 .52.17.67.58.72 2.08 1.92 3.9 2.42 3.9.18 0 .27-.09.27-.56v-1.95c-.06-1-.59-1.08-.59-1.43 0-.17.14-.34.37-.34h2.29c.32 0 .43.17.43.55v2.9c0 .32.14.43.23.43.18 0 .33-.11.66-.44 1.02-1.14 1.74-2.9 1.74-2.9.1-.22.27-.42.65-.42h1.46c.44 0 .53.22.44.53-.18.85-1.97 3.37-1.97 3.37-.15.25-.21.36 0 .64.15.21.65.64.98 1.03.62.7 1.09 1.29 1.22 1.7.13.4-.07.61-.48.61Z"/></svg>
+        </a>
+        <a href="https://t.me/Ilya_Kutuzov1993" target="_blank" rel="noopener" class="social" aria-label="Telegram">
+          <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0Zm4.962 7.224c.1-.002.321.023.464.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212-.07-.062-.174-.041-.249-.024-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635Z"/></svg>
+        </a>
+        <a href="#" class="social" aria-label="YouTube">
+          <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z"/></svg>
+        </a>
+      </div>
+
+      <div class="counter glass">
+        <div class="counter__label">Вы посетитель №</div>
+        <div class="counter__digits" id="counter"></div>
+      </div>
+    </div>
+  </section>
+
+  <footer>© OnlyOne — Russian Rap</footer>
+
+  <script>
+    /* ====== СПИСОК ТРЕКОВ ======
+       Положи свои mp3/wav в папку ./tracks/ и перечисли имена файлов здесь.
+       Название карточки берётся из имени файла: убирается расширение,
+       дефисы и подчёркивания заменяются на пробелы. */
+    const TRACKS = [
+      "Only One - Отпусти меня.mp3",
+      "Only One - Закрой глаза.mp3",
+      "Only One - Все впереди.mp3",
+      "Only One - Рифмую мысли.mp3",
+      "Only One - На любителя.mp3",
+      "Only One - Родителям.mp3",
+      "Only One - Отношения.mp3",
+      "Only One - Я никого не забыл.mp3",
+      "Only One ( feat Кирюха Южный) - Басы в колонках.mp3",
+      "Only One - Не унесет даже ветер.mp3",
+      "Кирюха Южный & Only One - ГолосУлиц.mp3",
+      "Only One - Мост над рекой.mp3"
+    ];
+
+    const NOTE = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+    const titleFromFile = (file) =>
+      file.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
+
+    const grid = document.getElementById("tracksGrid");
+    if (!TRACKS.length) {
+      grid.innerHTML = '<p class="tracks__empty">Скоро здесь появятся треки…</p>';
+    } else {
+      TRACKS.forEach((file, i) => {
+        const card = document.createElement("div");
+        card.className = "track reveal";
+        card.style.transitionDelay = (i % 3) * 0.08 + "s";
+        const src = "tracks/" + encodeURIComponent(file);
+        card.innerHTML =
+          '<div class="track__row">' +
+            '<div class="track__art">' + NOTE + '</div>' +
+            '<div class="track__title">' + titleFromFile(file) + '</div>' +
+          '</div>' +
+          '<audio controls playsinline preload="none" src="' + src + '">Ваш браузер не поддерживает аудио.</audio>';
+        grid.appendChild(card);
+      });
+    }
+
+    /* Появление при скролле */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) { entry.target.classList.add("visible"); observer.unobserve(entry.target); }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll(".reveal").forEach((el) => observer.observe(el));
+
+    /* Один играющий трек + подсветка */
+    const audios = document.querySelectorAll("audio");
+    audios.forEach((a) => {
+      a.addEventListener("play", () => {
+        audios.forEach((o) => { if (o !== a) o.pause(); });
+        document.querySelectorAll(".track").forEach((t) => t.classList.remove("playing"));
+        a.closest(".track").classList.add("playing");
+      });
+      a.addEventListener("pause", () => a.closest(".track")?.classList.remove("playing"));
+      a.addEventListener("ended", () => a.closest(".track")?.classList.remove("playing"));
+    });
+
+    /* Печатающийся подзаголовок */
+    (function typewriter() {
+      const text = "Russian Rap";
+      const el = document.getElementById("typed");
+      let i = 0;
+      (function tick() {
+        if (i <= text.length) { el.textContent = text.slice(0, i++); setTimeout(tick, 130); }
+      })();
+    })();
+
+    /* Счётчик посетителей */
+    (function counter() {
+      const key = "oo_visits";
+      let n = parseInt(localStorage.getItem(key) || "0", 10);
+      if (!n) n = 1337 + Math.floor(Math.random() * 200);
+      n += 1;
+      localStorage.setItem(key, String(n));
+      const str = String(n).padStart(6, "0");
+      document.getElementById("counter").innerHTML =
+        str.split("").map((d) => "<span>" + d + "</span>").join("");
+    })();
+  </script>
+
+</body>
+</html>
