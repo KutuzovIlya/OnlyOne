@@ -149,7 +149,10 @@
     @keyframes eq { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
     .track.playing .track__art svg { display: none; }
     .track.playing .track__art .eq { display: flex; }
-    .track__title { font-family: "Unbounded"; font-weight: 600; font-size: 17px; line-height: 1.2; letter-spacing: -.3px; }
+    .track__title { flex: 1 1 auto; font-family: "Unbounded"; font-weight: 600; font-size: 17px; line-height: 1.2; letter-spacing: -.3px; }
+    .track__plays { flex: 0 0 auto; display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-weight: 600; color: var(--muted); white-space: nowrap; }
+    .track__plays svg { width: 15px; height: 15px; opacity: .8; }
+    .track.playing .track__plays { color: var(--g3); }
     .track audio { width: 100%; min-height: 44px; }
 
     .track.playing { border-color: transparent; box-shadow: 0 0 0 1.5px var(--g3), 0 18px 44px rgba(255,46,136,.28); }
@@ -281,6 +284,7 @@
 
     const NOTE = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
     const HEART = '<svg viewBox="0 0 24 24"><path d="M12 21s-6.7-4.35-9.5-8.28C.5 9.24 2.06 5.5 5.5 5.5c2 0 3.2 1.05 4 2.16C10.3 6.55 11.5 5.5 13.5 5.5c3.44 0 5 3.74 3 7.22C13.7 16.65 12 21 12 21z"/></svg>';
+    const PLAYS = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
     const hash = (str) => { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; return h; };
     const titleFromFile = (file) =>
       file.replace(/\.[^.]+$/, "").replace(/_+/g, " ").replace(/Only\s*One/gi, "OnlyOne").replace(/\s+/g, " ").trim();
@@ -302,6 +306,7 @@
           '<div class="track__row">' +
             '<div class="track__art">' + NOTE + '<span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span></div>' +
             '<div class="track__title">' + titleFromFile(file) + '</div>' +
+            '<div class="track__plays" title="Прослушиваний">' + PLAYS + '<span class="play-count">0</span></div>' +
           '</div>' +
           '<audio controls playsinline preload="none" src="' + src + '">Ваш браузер не поддерживает аудио.</audio>' +
           '<button class="like-btn" type="button" aria-pressed="false" aria-label="Лайк">' +
@@ -309,6 +314,7 @@
           '</button>';
         grid.appendChild(card);
         initLike(card, file);
+        initPlays(card, file);
       });
     }
 
@@ -345,6 +351,19 @@
       });
     }
 
+    /* Счётчик прослушиваний: засчитываем после 5 секунд воспроизведения. */
+    function initPlays(card, file) {
+      const countEl = card.querySelector(".play-count");
+      const key = "p" + hash(file);
+      card.querySelector("audio").dataset.playKey = key;
+      card._playCountEl = countEl;
+
+      fetch(LIKE_API + "/get/" + LIKE_NS + "/" + key)
+        .then((r) => (r.ok ? r.json() : { value: 0 }))
+        .then((d) => { countEl.textContent = (d && typeof d.value === "number") ? d.value : 0; })
+        .catch(() => {});
+    }
+
     /* Появление при скролле */
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
@@ -362,8 +381,22 @@
         a.closest(".track").classList.add("playing");
       });
       a.addEventListener("pause", () => a.closest(".track")?.classList.remove("playing"));
+
+      a.addEventListener("timeupdate", () => {
+        if (a._counted || a.currentTime < 5) return;
+        a._counted = true;
+        const card = a.closest(".track");
+        const countEl = card && card._playCountEl;
+        if (countEl) countEl.textContent = (parseInt(countEl.textContent, 10) || 0) + 1; // оптимистично
+        fetch(LIKE_API + "/hit/" + LIKE_NS + "/" + a.dataset.playKey)
+          .then((r) => r.json())
+          .then((d) => { if (countEl && d && typeof d.value === "number") countEl.textContent = d.value; })
+          .catch(() => {});
+      });
+
       a.addEventListener("ended", () => {
         a.closest(".track")?.classList.remove("playing");
+        a._counted = false;
         const next = audios[audios.indexOf(a) + 1];
         if (next) {
           next.play().catch(() => {});
