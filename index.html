@@ -160,15 +160,21 @@
     .social svg { width: 26px; height: 26px; fill: currentColor; }
     .social:hover { transform: translateY(-4px); background: var(--grad); color: #120a02; box-shadow: 0 14px 34px rgba(255,106,61,.4); }
 
-    /* Счётчик */
-    .counter { margin: 64px auto 0; display: inline-flex; flex-direction: column; align-items: center; gap: 10px; padding: 18px 26px; border-radius: 18px; }
-    .counter__label { color: var(--muted); font-size: 12px; letter-spacing: 3px; text-transform: uppercase; }
-    .counter__digits { display: inline-flex; gap: 6px; }
-    .counter__digits span {
-      font-family: "Unbounded"; font-weight: 800; font-size: 30px; padding: 6px 10px; border-radius: 10px;
+    /* Лайк трека */
+    .like-btn {
+      margin-top: 12px; display: inline-flex; align-items: center; gap: 8px;
+      min-height: 40px; padding: 8px 16px; border-radius: 999px; cursor: pointer;
+      font: inherit; font-size: 14px; font-weight: 600; color: var(--muted);
       background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-      background-image: var(--grad); -webkit-background-clip: text; background-clip: text; color: transparent;
+      transition: transform .15s ease, color .2s ease, background .25s ease, border-color .2s ease;
     }
+    .like-btn svg { width: 18px; height: 18px; fill: currentColor; transition: transform .2s ease; }
+    .like-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .like-btn:active { transform: scale(.95); }
+    .like-btn.liked { color: #fff; background: linear-gradient(120deg, var(--g3), var(--g2)); border-color: transparent; }
+    .like-btn.liked svg { transform: scale(1.18); animation: pop .35s ease; }
+    @keyframes pop { 40% { transform: scale(1.5); } }
+    .like-count { font-variant-numeric: tabular-nums; }
 
     footer { text-align: center; padding: 40px 0 calc(40px + var(--safe-b)); color: var(--muted); font-size: 14px; border-top: 1px solid var(--border); margin-top: 70px; }
 
@@ -210,7 +216,6 @@
       <h2 class="section-title">Обо мне</h2>
       <div class="about__card glass">
         <p>OnlyOne — независимый рэп-исполнитель из России. Честный текст, плотный бит и собственный почерк, выросший на старой школе хип-хопа и звуке улиц.</p>
-        <p>Здесь заглушка-биография: расскажи о своём пути, релизах и о том, что хочешь донести слушателю. Замени этот текст на свой.</p>
         <div class="about__sign">— OnlyOne</div>
       </div>
     </div>
@@ -242,11 +247,6 @@
           <svg viewBox="0 0 24 24"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z"/></svg>
         </a>
       </div>
-
-      <div class="counter glass">
-        <div class="counter__label">Вы посетитель №</div>
-        <div class="counter__digits" id="counter"></div>
-      </div>
     </div>
   </section>
 
@@ -273,6 +273,8 @@
     ];
 
     const NOTE = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>';
+    const HEART = '<svg viewBox="0 0 24 24"><path d="M12 21s-6.7-4.35-9.5-8.28C.5 9.24 2.06 5.5 5.5 5.5c2 0 3.2 1.05 4 2.16C10.3 6.55 11.5 5.5 13.5 5.5c3.44 0 5 3.74 3 7.22C13.7 16.65 12 21 12 21z"/></svg>';
+    const hash = (str) => { let h = 5381; for (let i = 0; i < str.length; i++) h = ((h << 5) + h + str.charCodeAt(i)) >>> 0; return h; };
     const titleFromFile = (file) =>
       file.replace(/\.[^.]+$/, "").replace(/_+/g, " ").replace(/Only\s*One/gi, "OnlyOne").replace(/\s+/g, " ").trim();
 
@@ -290,8 +292,32 @@
             '<div class="track__art">' + NOTE + '</div>' +
             '<div class="track__title">' + titleFromFile(file) + '</div>' +
           '</div>' +
-          '<audio controls playsinline preload="none" src="' + src + '">Ваш браузер не поддерживает аудио.</audio>';
+          '<audio controls playsinline preload="none" src="' + src + '">Ваш браузер не поддерживает аудио.</audio>' +
+          '<button class="like-btn" type="button" aria-pressed="false" aria-label="Лайк">' +
+            HEART + '<span class="like-count">0</span>' +
+          '</button>';
         grid.appendChild(card);
+        initLike(card, file);
+      });
+    }
+
+    /* Лайк: один на трек для пользователя (сохраняется в браузере) */
+    function initLike(card, file) {
+      const btn = card.querySelector(".like-btn");
+      const countEl = btn.querySelector(".like-count");
+      const key = "oo_liked_" + hash(file);
+      const base = 0; // стартовое число лайков (без бэкенда счёт локальный, для каждого браузера свой)
+      let liked = localStorage.getItem(key) === "1";
+      const render = () => {
+        btn.classList.toggle("liked", liked);
+        btn.setAttribute("aria-pressed", String(liked));
+        countEl.textContent = base + (liked ? 1 : 0);
+      };
+      render();
+      btn.addEventListener("click", () => {
+        liked = !liked;
+        if (liked) localStorage.setItem(key, "1"); else localStorage.removeItem(key);
+        render();
       });
     }
 
@@ -323,18 +349,6 @@
       (function tick() {
         if (i <= text.length) { el.textContent = text.slice(0, i++); setTimeout(tick, 130); }
       })();
-    })();
-
-    /* Счётчик посетителей */
-    (function counter() {
-      const key = "oo_visits";
-      let n = parseInt(localStorage.getItem(key) || "0", 10);
-      if (!n) n = 1337 + Math.floor(Math.random() * 200);
-      n += 1;
-      localStorage.setItem(key, String(n));
-      const str = String(n).padStart(6, "0");
-      document.getElementById("counter").innerHTML =
-        str.split("").map((d) => "<span>" + d + "</span>").join("");
     })();
   </script>
 
